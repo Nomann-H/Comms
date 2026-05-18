@@ -1,0 +1,74 @@
+clc;
+clear;
+close all;
+
+fs = 10000;
+N = 10000;
+A = 1;
+f = 1000;
+noise_var = 0.1;
+
+t = (0:N-1)/fs;
+
+signal = A * sin(2*pi*f*t);
+
+noise = sqrt(noise_var) * randn(1, N);
+
+input_signal = signal + noise;
+
+gain = 2;
+added_noise_var = 0.2;
+
+system_noise = sqrt(added_noise_var) * randn(1, N);
+
+output_signal = gain * input_signal + system_noise;
+
+signal_power = mean(signal.^2);
+noise_power = mean(noise.^2);
+output_noise_power = mean(system_noise.^2);
+
+snr_in = 10 * log10(signal_power / noise_power);
+
+snr_out = 10 * log10((gain^2 * signal_power) / output_noise_power);
+
+noise_figure = snr_in - snr_out;
+
+fprintf('Input SNR (dB): %.2f\n', snr_in);
+
+fprintf('Output SNR (dB): %.2f\n', snr_out);
+
+fprintf('Noise Figure (dB): %.2f\n', noise_figure);
+
+figure;
+
+subplot(3,1,1);
+plot(t, signal);
+title('Original Signal');
+
+subplot(3,1,2);
+plot(t, input_signal);
+title('Input Signal with Noise');
+
+subplot(3,1,3);
+plot(t, output_signal);
+title('Output Signal');
+
+figure;
+
+f_axis = (-N/2:N/2-1)*(fs/N);
+
+signal_fft = fftshift(abs(fft(signal)));
+input_fft = fftshift(abs(fft(input_signal)));
+output_fft = fftshift(abs(fft(output_signal)));
+
+subplot(3,1,1);
+plot(f_axis, signal_fft);
+title('Spectrum of Original Signal');
+
+subplot(3,1,2);
+plot(f_axis, input_fft);
+title('Spectrum of Input Signal');
+
+subplot(3,1,3);
+plot(f_axis, output_fft);
+title('Spectrum of Output Signal');
