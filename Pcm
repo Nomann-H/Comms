@@ -1,0 +1,81 @@
+clc;
+close all;
+clear all;
+
+amp=input('Enter Amplitude of the Signal: ');
+fs=input('Enter Frequency of the Signal: ');
+f=input('Enter Sampling Frequency: ');
+n=input('Enter n value for PCM system: ');
+
+L=2^n;
+
+t=0:0.0001:1;
+t1=0:1/fs/f:1;
+s=amp*sin(2*pi*f*t);
+ss=amp*sin(2*pi*f*t1);
+
+subplot(3,1,1);
+plot(t,s);
+title('Analog Signal');
+ylabel('Amplitude--->');
+xlabel('Time--->');
+
+subplot(3,1,2);
+stem(t1,ss);
+grid on;
+title('Sampled Signal');
+ylabel('Amplitude--->');
+xlabel('Time--->');
+
+vmax=amp;
+vmin=-vmax;
+del=(vmax-vmin)/L;
+part=vmin:del:vmax;
+code=vmin-(del/2):del:vmax+(del/2);
+
+[ind,q]=quantiz(ss,part,code);
+
+l1=length(ind);
+l2=length(q);
+
+for i=1:l1
+    if(ind(i)~=0)
+        ind(i)=ind(i)-1;
+    end
+    i=i+1;
+end
+
+for i=1:l2
+    if(q(i)==vmin-(del/2))
+        q(i)=vmin+(del/2);
+    end
+end
+
+subplot(3,1,3);
+stem(t1,q);
+grid on;
+title('Quantized Signal');
+ylabel('Amplitude--->');
+xlabel('Time--->');
+
+figure
+code=de2bi(ind,'left-msb');
+
+k=1;
+
+for i=1:l1
+    for j=1:n
+        coded(k)=code(i,j);
+        j=j+1;
+        k=k+1;
+    end
+    i=i+1;
+end
+
+subplot(2,1,1);
+stairs(coded);
+axis([0 length(coded) -2 3]);
+ylabel('Amplitude--->');
+xlabel('Time--->');
+title('Encoded Signal');
+grid on;
