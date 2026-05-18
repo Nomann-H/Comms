@@ -1,0 +1,59 @@
+clc;
+clear all;
+close all;
+
+SR1=800;
+dt1=1/SR1;
+t1=0:dt1:.04;
+x1=cos(180*pi*t1);
+
+SR2=1500;
+dt2=1/SR2;
+t2=0:dt2:.04;
+x2=cos(180*pi*t2);
+
+figure;
+plot(t1,x1,'rx-',t2,x2,'bo-');
+xlabel('Time (s)');
+ylabel('x');
+legend('SR=800','SR=1500');
+
+f=2000;
+T=1/f;
+tmin=0;
+tmax=5*T;
+
+dt1=1/10000;
+dt2=1/3000;
+
+t1=tmin:dt1:tmax;
+t2=tmin:dt2:tmax;
+
+x1=sin(2*pi*f*t1);
+x2=sin(2*pi*f*t2);
+
+figure;
+subplot(211);
+stem(t1,x1);
+
+subplot(212);
+stem(t2,x2);
+
+numSamples=round(0.1/(1/200));
+
+t=linspace(0,0.1,numSamples);
+
+xt=2*cos(100*pi*t);
+
+figure;
+plot(t,xt,'b.-','LineWidth',2,'MarkerSize',15);
+
+grid on;
+
+fontSize=14;
+
+title('x(t) vs. t','FontSize',fontSize);
+
+xlabel('t','FontSize',fontSize);
+
+ylabel('x(t)','FontSize',fontSize);
